@@ -747,6 +747,15 @@ in {
       its example for how to do this.
     '';
 
+    programs.firefox.policies = {
+      ExtensionSettings = listToAttrs (map (lang:
+        nameValuePair "langpack-${lang}@firefox.mozilla.org" {
+          installation_mode = "normal_installed";
+          install_url =
+            "https://releases.mozilla.org/pub/firefox/releases/${cfg.package.version}/linux-x86_64/xpi/${lang}.xpi";
+        }) cfg.languagePacks);
+    };
+
     home.packages = lib.optional (cfg.finalPackage != null) cfg.finalPackage;
 
     home.file = mkMerge ([{
@@ -798,16 +807,5 @@ in {
           force = true;
         };
     }));
-  } // setAttrByPath modulePath {
-    finalPackage = wrapPackage cfg.package;
-
-    policies = {
-      ExtensionSettings = listToAttrs (map (lang:
-        nameValuePair "langpack-${lang}@firefox.mozilla.org" {
-          installation_mode = "normal_installed";
-          install_url =
-            "https://releases.mozilla.org/pub/firefox/releases/${cfg.package.version}/linux-x86_64/xpi/${lang}.xpi";
-        }) cfg.languagePacks);
-    };
-  });
+  } // setAttrByPath modulePath { finalPackage = wrapPackage cfg.package; });
 }
