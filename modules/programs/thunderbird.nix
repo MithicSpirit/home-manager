@@ -703,8 +703,8 @@ in
                   enabledAccountsIds = (lib.attrsets.mapAttrsToList (name: value: value) accountNameToId) ++ [
                     "account1"
                   ];
-                in
-                accountsOrderIds ++ (lib.lists.subtractLists accountsOrderIds enabledAccountsIds);
+                in if accounts == [] then [] else accountsOrderIds ++
+                  (lib.lists.subtractLists accountsOrderIds enabledAccountsIds);
             in
             {
               text = mkUserJs (builtins.foldl' (a: b: a // b) { } (
